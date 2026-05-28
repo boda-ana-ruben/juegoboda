@@ -104,7 +104,7 @@ export class Game {
 
   private start(): void {
     this.state = "running";
-    void this.audio.playRunMusic();
+    this.audio.playRunMusic();
     this.setOverlay("", false);
   }
 
@@ -136,7 +136,7 @@ export class Game {
     this.state = "gameOver";
     this.hasWon = false;
     this.audio.stopAll();
-    void this.audio.playFailMusic();
+    this.audio.playFailMusic();
 
     if (this.distance > this.best) {
       this.best = this.distance;
@@ -158,7 +158,7 @@ export class Game {
     this.hasWon = true;
     this.altarX = this.player.x + ALTAR_TARGET_OFFSET_X;
     this.audio.stopAll();
-    void this.audio.playWinMusic();
+    this.audio.playWinMusic();
 
     if (this.distance > this.best) {
       this.best = this.distance;

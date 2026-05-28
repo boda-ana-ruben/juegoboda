@@ -114,16 +114,79 @@ canvas {
   color: var(--muted);
 }
 
+.rotate-hint {
+  display: none;
+}
+
+/* ── Móvil ───────────────────────────────────────────────── */
 @media (max-width: 720px) {
   #app {
-    padding: 10px 10px 16px;
+    padding: 0 0 8px;
+    gap: 0;
   }
 
+  /* HUD en una sola línea pegada al borde superior */
   .hud-card {
-    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px 12px;
+    padding: 6px 10px;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+  }
+
+  h1 {
+    font-size: 1rem;
+    margin: 0;
+  }
+
+  .subtitle {
+    display: none;
+  }
+
+  .stats {
+    margin-left: auto;
+    gap: 12px;
+  }
+
+  .stats .label {
+    font-size: 0.68rem;
+  }
+
+  .stats strong {
+    font-size: 1rem;
+  }
+
+  /* Canvas borde a borde */
+  .game-shell {
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
   }
 
   .help {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
+    padding: 5px 10px;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+  }
+}
+
+/* Aviso de rotar solo en vertical */
+@media (max-width: 720px) and (orientation: portrait) {
+  .rotate-hint {
+    display: block;
+    text-align: center;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--muted);
+    padding: 3px 10px 4px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
   }
 }
