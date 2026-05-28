@@ -1,0 +1,1 @@
+{"root":["./src/collision.ts","./src/constants.ts","./src/game.ts","./src/input.ts","./src/main.ts","./src/progression.ts","./src/renderer.ts","./src/score.ts","./src/types.ts"],"version":"5.9.3"}
