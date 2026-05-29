@@ -6,6 +6,8 @@ import type {
   PlayerAnimation,
 } from "./types.ts";
 import altarUrl from "./assets/altar/altar.png";
+import dogFrame1Url from "./assets/dog/bilbo.png";
+import dogFrame2Url from "./assets/dog/bilbo2.png";
 import floorTileUrl from "./assets/floor/floor.png";
 import obstacleAUrl from "./assets/obstacles/mariachi_1.png";
 import obstacleBUrl from "./assets/obstacles/mariachi_2.png";
@@ -17,8 +19,15 @@ const obstacleSprites: Record<MariachiType, HTMLImageElement> = {
   C: createImage(obstacleCUrl),
 };
 const altarSprite = createImage(altarUrl);
+const dogFrame1Sprite = createImage(dogFrame1Url);
+const dogFrame2Sprite = createImage(dogFrame2Url);
 const floorTileSprite = createImage(floorTileUrl);
 const ALTAR_GROUND_ANCHOR_OFFSET_PX = 24;
+const ALTAR_DRAW_WIDTH_PX = 200;
+const DOG_DRAW_WIDTH_PX = 118;
+const DOG_FROM_ALTAR_OFFSET_X_PX = 84;
+const DOG_GROUND_ANCHOR_OFFSET_PX = 6;
+const DOG_FRAME_DURATION_MS = 170;
 
 export type RenderState = {
   player: Player;
@@ -46,6 +55,7 @@ export function render(
   );
   drawPlayer(ctx, state.player, state.playerAnimation.frame);
   drawAltar(ctx, config.groundY, state.altarX);
+  drawDogByAltar(ctx, config.groundY, state.altarX, state.nowMs);
   drawObstacles(ctx, state.obstacles);
   if (state.hasWon) {
     drawConfetti(ctx, canvas, state.nowMs);
@@ -230,7 +240,7 @@ function drawAltar(
 ): void {
   if (altarX === null) return;
 
-  const drawWidth = 200;
+  const drawWidth = ALTAR_DRAW_WIDTH_PX;
   const ratio =
     altarSprite.naturalWidth > 0 && altarSprite.naturalHeight > 0
       ? altarSprite.naturalHeight / altarSprite.naturalWidth
@@ -255,6 +265,52 @@ function drawAltar(
   ctx.arc(drawX + 100, drawY + 80, 60, Math.PI, 0);
   ctx.lineTo(drawX + 160, groundY + 4);
   ctx.stroke();
+}
+
+function drawDogByAltar(
+  ctx: CanvasRenderingContext2D,
+  groundY: number,
+  altarX: number | null,
+  nowMs: number,
+): void {
+  if (altarX === null) return;
+
+  const frameIndex = Math.floor(nowMs / DOG_FRAME_DURATION_MS) % 2;
+  const dogSprite = frameIndex === 0 ? dogFrame1Sprite : dogFrame2Sprite;
+
+  const drawWidth = DOG_DRAW_WIDTH_PX;
+  const ratio =
+    dogSprite.naturalWidth > 0 && dogSprite.naturalHeight > 0
+      ? dogSprite.naturalHeight / dogSprite.naturalWidth
+      : 1;
+  const drawHeight = drawWidth * ratio;
+
+  const drawX = altarX - DOG_DRAW_WIDTH_PX + DOG_FROM_ALTAR_OFFSET_X_PX;
+  const drawY = groundY - drawHeight + DOG_GROUND_ANCHOR_OFFSET_PX;
+
+  if (dogSprite.complete && dogSprite.naturalWidth > 0) {
+    const previousSmoothing = ctx.imageSmoothingEnabled;
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(dogSprite, drawX, drawY, drawWidth, drawHeight);
+    ctx.imageSmoothingEnabled = previousSmoothing;
+    return;
+  }
+
+  ctx.fillStyle = "#d0a248";
+  ctx.fillRect(drawX, drawY + 18, drawWidth * 0.72, drawHeight * 0.44);
+  ctx.fillStyle = "#5b4330";
+  ctx.fillRect(
+    drawX + drawWidth * 0.58,
+    drawY + drawHeight * 0.46,
+    10,
+    drawHeight * 0.48,
+  );
+  ctx.fillRect(
+    drawX + drawWidth * 0.32,
+    drawY + drawHeight * 0.46,
+    10,
+    drawHeight * 0.48,
+  );
 }
 
 function drawConfetti(
