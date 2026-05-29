@@ -6,6 +6,7 @@ import type {
   PlayerAnimation,
 } from "./types.ts";
 import altarUrl from "./assets/altar/altar.png";
+import dunesUrl from "./assets/background/dessert_back.png";
 import dogFrame1Url from "./assets/dog/bilbo.png";
 import dogFrame2Url from "./assets/dog/bilbo2.png";
 import floorTileUrl from "./assets/floor/floor.png";
@@ -19,15 +20,19 @@ const obstacleSprites: Record<MariachiType, HTMLImageElement> = {
   C: createImage(obstacleCUrl),
 };
 const altarSprite = createImage(altarUrl);
+const dunesSprite = createImage(dunesUrl);
 const dogFrame1Sprite = createImage(dogFrame1Url);
 const dogFrame2Sprite = createImage(dogFrame2Url);
 const floorTileSprite = createImage(floorTileUrl);
 const ALTAR_GROUND_ANCHOR_OFFSET_PX = 24;
 const ALTAR_DRAW_WIDTH_PX = 200;
-const DOG_DRAW_WIDTH_PX = 118;
+const DOG_DRAW_WIDTH_PX = 75;
 const DOG_FROM_ALTAR_OFFSET_X_PX = 84;
 const DOG_GROUND_ANCHOR_OFFSET_PX = 6;
 const DOG_FRAME_DURATION_MS = 170;
+const DUNES_PARALLAX_FACTOR = 0.52;
+const DUNES_BOTTOM_OFFSET_PX = 0;
+const DUNES_TILE_OVERLAP_PX = 1;
 
 export type RenderState = {
   player: Player;
@@ -94,6 +99,8 @@ function drawBackdrop(
   ctx.fillStyle = horizonGradient;
   ctx.fillRect(0, groundY - 52, canvas.width, 66);
 
+  drawDunesLayer(ctx, canvas, groundY, distance);
+
   const groundHeight = canvas.height - groundY;
   if (floorTileSprite.complete && floorTileSprite.naturalWidth > 0) {
     const tileWidth = floorTileSprite.naturalWidth;
@@ -128,6 +135,41 @@ function drawBackdrop(
       ctx.stroke();
     }
   }
+}
+
+function drawDunesLayer(
+  ctx: CanvasRenderingContext2D,
+  canvas: HTMLCanvasElement,
+  groundY: number,
+  distance: number,
+): void {
+  if (!dunesSprite.complete || dunesSprite.naturalWidth <= 0) {
+    return;
+  }
+
+  const tileWidth = dunesSprite.naturalWidth;
+  const tileHeight = dunesSprite.naturalHeight;
+  const scrollOffset = (distance * DUNES_PARALLAX_FACTOR) % tileWidth;
+  const drawY = groundY - tileHeight + DUNES_BOTTOM_OFFSET_PX;
+
+  const previousSmoothing = ctx.imageSmoothingEnabled;
+  ctx.imageSmoothingEnabled = false;
+
+  for (
+    let x = -scrollOffset;
+    x < canvas.width + tileWidth + DUNES_TILE_OVERLAP_PX;
+    x += tileWidth
+  ) {
+    ctx.drawImage(
+      dunesSprite,
+      x,
+      drawY,
+      tileWidth + DUNES_TILE_OVERLAP_PX,
+      tileHeight,
+    );
+  }
+
+  ctx.imageSmoothingEnabled = previousSmoothing;
 }
 
 function drawCloudSet(
