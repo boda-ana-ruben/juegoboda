@@ -67,7 +67,7 @@ export class Game {
       velocityY: 0,
       grounded: true,
     };
-    this.bestEl.textContent = `${Math.floor(this.best)}m`;
+    this.bestEl.textContent = `R${Math.floor(this.best)}`;
     this.reset();
   }
 
@@ -129,7 +129,6 @@ export class Game {
     this.playerFrameIndex = 0;
     this.playerFrameTimer = 0;
     this.audio.stopAll();
-    this.setOverlay("Pulsa Space, ArrowUp o toca para correr otra vez", true);
   }
 
   private endRun(): void {
@@ -141,14 +140,14 @@ export class Game {
     if (this.distance > this.best) {
       this.best = this.distance;
       saveBestScore(this.best);
-      this.bestEl.textContent = `${Math.floor(this.best)}m`;
+      this.bestEl.textContent = `R${Math.floor(this.best)}`;
       this.justBeatRecord = true;
     }
 
     this.setOverlay(
       this.justBeatRecord
-        ? `Nuevo record: ${Math.floor(this.distance)}m\nToca para reintentar`
-        : `Game Over · Distancia ${Math.floor(this.distance)}m\nToca para reintentar`,
+        ? `Nuevo record: ${Math.floor(this.distance)}`
+        : `Game Over`,
       true,
     );
   }
@@ -163,7 +162,7 @@ export class Game {
     if (this.distance > this.best) {
       this.best = this.distance;
       saveBestScore(this.best);
-      this.bestEl.textContent = `${Math.floor(this.best)}m`;
+      this.bestEl.textContent = `R${Math.floor(this.best)}`;
       this.justBeatRecord = true;
     }
 
@@ -192,12 +191,12 @@ export class Game {
     this.distance += dt * DISTANCE_PER_SECOND;
     if (this.distance >= FINISH_DISTANCE) {
       this.distance = FINISH_DISTANCE;
-      this.distanceEl.textContent = `${Math.floor(this.distance)}m`;
+      this.distanceEl.textContent = `${Math.floor(this.distance)}`;
       this.endWin();
       return;
     }
 
-    this.distanceEl.textContent = `${Math.floor(this.distance)}m`;
+    this.distanceEl.textContent = `${Math.floor(this.distance)}`;
 
     const nowMilestone =
       Math.floor(this.distance / MILESTONE_STEP) * MILESTONE_STEP;

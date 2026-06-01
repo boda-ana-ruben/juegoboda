@@ -16,20 +16,6 @@
   </head>
   <body>
     <div id="app">
-      <header class="hud-card">
-        <h1>Boda Runner</h1>
-        <p class="subtitle">Corre hacia el altar. Salta mariachis.</p>
-        <div class="stats">
-          <div>
-            <span class="label">Distancia</span>
-            <strong id="distance">0m</strong>
-          </div>
-          <div>
-            <span class="label">Record</span>
-            <strong id="best">0m</strong>
-          </div>
-        </div>
-      </header>
       <main class="game-shell">
         <canvas
           id="game"
@@ -37,6 +23,10 @@
           height="380"
           aria-label="Juego runner de boda"
         ></canvas>
+        <div class="score-hud" aria-live="polite">
+          <strong id="distance">0</strong>
+          <span id="best">R0</span>
+        </div>
         <div id="overlay" class="overlay"></div>
       </main>
       <div class="rotate-hint">↻ Mejor en horizontal · gira el dispositivo</div>

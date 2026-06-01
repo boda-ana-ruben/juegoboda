@@ -6,6 +6,7 @@ import type {
   PlayerAnimation,
 } from "./types.ts";
 import altarUrl from "./assets/altar/altar.png";
+import cactusUrl from "./assets/background/cactus/cactus.png";
 import dunesUrl from "./assets/background/dessert_back.png";
 import dogFrame1Url from "./assets/dog/bilbo.png";
 import dogFrame2Url from "./assets/dog/bilbo2.png";
@@ -20,6 +21,7 @@ const obstacleSprites: Record<MariachiType, HTMLImageElement> = {
   C: createImage(obstacleCUrl),
 };
 const altarSprite = createImage(altarUrl);
+const cactusSprite = createImage(cactusUrl);
 const dunesSprite = createImage(dunesUrl);
 const dogFrame1Sprite = createImage(dogFrame1Url);
 const dogFrame2Sprite = createImage(dogFrame2Url);
@@ -30,9 +32,17 @@ const DOG_DRAW_WIDTH_PX = 75;
 const DOG_FROM_ALTAR_OFFSET_X_PX = 84;
 const DOG_GROUND_ANCHOR_OFFSET_PX = 6;
 const DOG_FRAME_DURATION_MS = 170;
-const DUNES_PARALLAX_FACTOR = 0.52;
+const DUNES_PARALLAX_FACTOR = 0.62;
 const DUNES_BOTTOM_OFFSET_PX = 0;
 const DUNES_TILE_OVERLAP_PX = 1;
+const CACTUS_PARALLAX_FACTOR = 1.9;
+const CACTUS_MAX_DRAW_HEIGHT_PX = 100;
+const CACTUS_MIN_SCALE = 0.68;
+const CACTUS_MAX_SCALE = 1;
+const CACTUS_GAP_MIN_PX = 120;
+const CACTUS_GAP_MAX_PX = 320;
+const CACTUS_GAP_PATTERN_SIZE = 12;
+const CACTUS_BOTTOM_OFFSET_PX = 16;
 
 export type RenderState = {
   player: Player;
@@ -100,6 +110,7 @@ function drawBackdrop(
   ctx.fillRect(0, groundY - 52, canvas.width, 66);
 
   drawDunesLayer(ctx, canvas, groundY, distance);
+  drawCactusLayer(ctx, canvas, groundY, distance);
 
   const groundHeight = canvas.height - groundY;
   if (floorTileSprite.complete && floorTileSprite.naturalWidth > 0) {
@@ -170,6 +181,75 @@ function drawDunesLayer(
   }
 
   ctx.imageSmoothingEnabled = previousSmoothing;
+}
+
+function drawCactusLayer(
+  ctx: CanvasRenderingContext2D,
+  canvas: HTMLCanvasElement,
+  groundY: number,
+  distance: number,
+): void {
+  if (!cactusSprite.complete || cactusSprite.naturalWidth <= 0) {
+    return;
+  }
+
+  const sourceWidth = cactusSprite.naturalWidth;
+  const sourceHeight = cactusSprite.naturalHeight;
+  const maxDrawWidth =
+    (sourceWidth / sourceHeight) * CACTUS_MAX_DRAW_HEIGHT_PX;
+  const patternWidth = getCactusPatternWidth(maxDrawWidth);
+  const totalShift = distance * CACTUS_PARALLAX_FACTOR;
+  const scrollOffset = totalShift % patternWidth;
+  const normalizedOffset =
+    scrollOffset < 0 ? scrollOffset + patternWidth : scrollOffset;
+  const cycleIndex = Math.floor(totalShift / patternWidth);
+
+  const previousSmoothing = ctx.imageSmoothingEnabled;
+  ctx.imageSmoothingEnabled = false;
+
+  let slotIndex = cycleIndex * CACTUS_GAP_PATTERN_SIZE;
+  let x = -normalizedOffset;
+
+  while (x < -maxDrawWidth) {
+    x += maxDrawWidth + getCactusGapPx(slotIndex);
+    slotIndex += 1;
+  }
+
+  while (x < canvas.width + maxDrawWidth) {
+    const scale = getCactusScale(slotIndex);
+    const drawHeight = CACTUS_MAX_DRAW_HEIGHT_PX * scale;
+    const drawWidth = (sourceWidth / sourceHeight) * drawHeight;
+    const drawY = groundY - drawHeight + CACTUS_BOTTOM_OFFSET_PX;
+    ctx.drawImage(cactusSprite, x, drawY, drawWidth, drawHeight);
+
+    x += maxDrawWidth + getCactusGapPx(slotIndex);
+    slotIndex += 1;
+  }
+
+  ctx.imageSmoothingEnabled = previousSmoothing;
+}
+
+function getCactusPatternWidth(maxDrawWidth: number): number {
+  let width = 0;
+  for (let i = 0; i < CACTUS_GAP_PATTERN_SIZE; i += 1) {
+    width += maxDrawWidth + getCactusGapPx(i);
+  }
+  return width;
+}
+
+function getCactusGapPx(slotIndex: number): number {
+  const patternIndex =
+    ((slotIndex % CACTUS_GAP_PATTERN_SIZE) + CACTUS_GAP_PATTERN_SIZE) %
+    CACTUS_GAP_PATTERN_SIZE;
+  const raw = Math.sin(patternIndex * 17.431 + 91.7) * 43758.5453;
+  const normalized = raw - Math.floor(raw);
+  return CACTUS_GAP_MIN_PX + normalized * (CACTUS_GAP_MAX_PX - CACTUS_GAP_MIN_PX);
+}
+
+function getCactusScale(slotIndex: number): number {
+  const raw = Math.sin(slotIndex * 12.9898 + 78.233) * 43758.5453;
+  const normalized = raw - Math.floor(raw);
+  return CACTUS_MIN_SCALE + normalized * (CACTUS_MAX_SCALE - CACTUS_MIN_SCALE);
 }
 
 function drawCloudSet(
