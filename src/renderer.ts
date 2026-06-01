@@ -195,8 +195,7 @@ function drawCactusLayer(
 
   const sourceWidth = cactusSprite.naturalWidth;
   const sourceHeight = cactusSprite.naturalHeight;
-  const maxDrawWidth =
-    (sourceWidth / sourceHeight) * CACTUS_MAX_DRAW_HEIGHT_PX;
+  const maxDrawWidth = (sourceWidth / sourceHeight) * CACTUS_MAX_DRAW_HEIGHT_PX;
   const patternWidth = getCactusPatternWidth(maxDrawWidth);
   const totalShift = distance * CACTUS_PARALLAX_FACTOR;
   const scrollOffset = totalShift % patternWidth;
@@ -243,7 +242,9 @@ function getCactusGapPx(slotIndex: number): number {
     CACTUS_GAP_PATTERN_SIZE;
   const raw = Math.sin(patternIndex * 17.431 + 91.7) * 43758.5453;
   const normalized = raw - Math.floor(raw);
-  return CACTUS_GAP_MIN_PX + normalized * (CACTUS_GAP_MAX_PX - CACTUS_GAP_MIN_PX);
+  return (
+    CACTUS_GAP_MIN_PX + normalized * (CACTUS_GAP_MAX_PX - CACTUS_GAP_MIN_PX)
+  );
 }
 
 function getCactusScale(slotIndex: number): number {
