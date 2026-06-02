@@ -167,7 +167,7 @@ export class Game {
     }
 
     this.setOverlay(
-      "¡Lo habeis logrado!<br><span style=\"display:inline-block;margin-top:2px;\">El código es <strong style=\"font-size:1.2em;\">739</strong></span>",
+      '¡Lo habeis logrado!<br><span style="display:inline-block;margin-top:2px;">El código es <strong style="font-size:1.2em;">739</strong></span>',
       true,
       0,
       true,
