@@ -3,7 +3,7 @@ import type { GameConfig, ObstacleProfile } from "./types.ts";
 export const BEST_SCORE_KEY = "wedding-runner-best";
 export const MILESTONE_STEP = 250;
 export const DISTANCE_PER_SECOND = 10;
-export const FINISH_DISTANCE = 100;
+export const FINISH_DISTANCE = 1000;
 export const SPEED_STEP_DISTANCE = 150;
 
 export const OBSTACLE_PROFILES: ObstacleProfile[] = [
