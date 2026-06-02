@@ -166,7 +166,12 @@ export class Game {
       this.justBeatRecord = true;
     }
 
-    this.setOverlay("Habeis esquivado a todos los Mariachis!!", true);
+    this.setOverlay(
+      "¡Lo habeis logrado!<br>El código es <strong>739</strong>",
+      true,
+      0,
+      true,
+    );
   }
 
   private update(dt: number): void {
@@ -309,8 +314,17 @@ export class Game {
     return image;
   }
 
-  private setOverlay(text: string, show: boolean, autoHideMs = 0): void {
-    this.overlay.textContent = text;
+  private setOverlay(
+    text: string,
+    show: boolean,
+    autoHideMs = 0,
+    useHtml = false,
+  ): void {
+    if (useHtml) {
+      this.overlay.innerHTML = text;
+    } else {
+      this.overlay.textContent = text;
+    }
     this.overlay.classList.toggle("show", show && text.length > 0);
 
     if (show && autoHideMs > 0) {
