@@ -167,7 +167,7 @@ export class Game {
     }
 
     this.setOverlay(
-      '<div style="display:inline-grid;gap:0;line-height:1.02;text-align:center;justify-items:center;background:rgba(0,0,0,0.35);padding:8px 12px;border-radius:10px;"><span>¡Lo habeis logrado!</span><span>El código es <strong style="font-size:1.25em;">739</strong></span></div>',
+      '<div style="display:inline-grid;gap:0;line-height:1.02;text-align:center;justify-items:center;background:rgba(0,0,0,0.35);padding:8px 12px;border-radius:10px;"><span>¡Habeis logrado neutralizar a los mariachis!</span><span>El código es <strong style="font-size:1.25em;">739</strong></span></div>',
       true,
       0,
       true,
